@@ -4,9 +4,22 @@ services:
       context: .
       dockerfile: Dockerfile-tomcat
     ports:
-      - "8081:8080"
+      - "8080:8080"
     volumes:
-      - ./webapps:/usr/local/tomcat/webapps
+      # Aqui nao podes por o diretorio base porque senao nao o manager e o host-manager da imagem desaparecem, porque a pasta local 
+      # nao contem as aplicacoes!!!!
+      # Em vez disso montas apenas a tua APP no seu diretorio 
+
+      # - ./webapps/myapp:/usr/local/tomcat/webapps/myapp
+
+      # Assim tambem pode ser, se nao quiseres ter o dir webapps
+      # - ./myApp:/usr/local/tomcat/webapps/myapp
+
+      # Aqui montas os ficheiros de configuracao diretamente e fazes overide dos defaults
+      # Num ambiente de producao, ou dependendo do ambiente talbez seja benefico estar diretamente na imagem
+      # MAs enquando desenvolves e testas, pode ser util estar assim para ser mais rapido perceber os problemas
+      - ./context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
+      - ./tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
     depends_on:
       - mariadb
 
